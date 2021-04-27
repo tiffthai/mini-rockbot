@@ -29,10 +29,10 @@
                 </div>
 
                 <div class="songOptions" v-if="!userVoted[itemIndex]">
-                    <div class="thumbWrapper" @click="handleSongVoting(itemIndex, 'like')">
+                    <div class="thumbWrapper" @click="handleSongVoting(itemIndex, item.pick_id, true)">
                         <img src="@/assets/thumb.svg" />
                     </div>
-                    <div class="thumbWrapper dislikeThumbs" @click="handleSongVoting(itemIndex, 'dislike')">
+                    <div class="thumbWrapper dislikeThumbs" @click="handleSongVoting(itemIndex, item.pick_id, false)">
                         <img src="@/assets/thumb.svg" />
                     </div>
                 </div>
@@ -57,14 +57,34 @@ export default {
     methods: {
         /**
          * Updates 
-         * @param {Number} itemIndex - index of song clicked
-         * @param {String} voteOption - user's vote option for song
+         * @param {Number} pickId - pick_id of song
+         * @param {String} isVoteUp - user's vote option for song
          */
-        handleSongVoting(itemIndex, voteOption) {
-            this.userVoted[itemIndex] = true;
-            console.log(voteOption);
-            // post method here
-        }
+        handleSongVoting(itemIndex, pickId, isVoteUp) {
+            // should a new key be added instead? How to keep track of what songs have been voted on?
+            this.userVoted[itemIndex] = true; 
+
+            let url = (isVoteUp) ? 
+                    'https://api.rockbot.com/v3/engage/vote_up': 
+                    'https://api.rockbot.com/v3/engage/vote_down';
+
+            fetch(`${url}?pick_id=${pickId}`, {
+                method: "POST",
+                withCredentials: true,
+                headers: {
+                    Authorization: "2ab742c917f872aa88644bc8f995e03159b2",
+                    "Content-Type": "application/json",
+                }
+            })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log("here it is", data)
+            })
+            .catch(err => {
+                console.log('there is an error: ', err)
+            })
+        },
+
     },
     mounted() {
         fetch("https://api.rockbot.com/v3/engage/now_playing?queue=1", {
