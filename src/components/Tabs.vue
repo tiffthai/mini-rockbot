@@ -1,6 +1,8 @@
 <template>
     <div id="tabs">
+        
         <div class="tabMainContent">
+            <!-- <Loader /> -->
             <keep-alive>  
                 <component :is="currentComponent" />
             </keep-alive>
@@ -17,16 +19,20 @@
                 <p>{{ tab.name }}</p>
             </div>
         </div>
+
     </div>
 </template>
 
 <script>
+import Loader from "./Loader.vue";
+
 import NowPlaying from "./NowPlaying.vue";
 import Request from "./Request.vue";
 
 export default {
     name: 'Tabs',
     components: {
+        Loader,
         NowPlaying,
         Request
     },
@@ -81,5 +87,16 @@ export default {
     align-items: center;
     justify-content: center;
     color: #666869;
+}
+
+.tabLabels:hover {
+    background: #409EEB;
+    color: white;
+    transition: .35s ease;
+}
+
+.activeTab {
+    background: #007EE4;
+    color: white;
 }
 </style>

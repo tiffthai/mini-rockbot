@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import Tabs from "@/components/Tabs.vue";
+import Tabs from '@/components/Tabs.vue';
 
 export default {
   name: 'App',
@@ -24,14 +24,19 @@ html, body {
   margin: 0;
   width: 100%;
   height: 100%;
+  font-family: 'Lato', sans-serif;
+}
+
+p {
+  margin: 0;
+  user-select: none;
+  letter-spacing: ;
 }
 
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 #header {
@@ -40,7 +45,6 @@ html, body {
   height: 50px;
   width: 100%;
   position: fixed;
-  top: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -49,5 +53,10 @@ html, body {
 #mainContent {
   height: calc(100% - 50px);
   margin-top: 50px;
+}
+
+.sectionLabel {
+  text-decoration: underline;
+  padding: 8px 12px;
 }
 </style>

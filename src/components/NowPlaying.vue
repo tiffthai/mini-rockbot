@@ -150,7 +150,7 @@ export default {
 }
 
 #comingUpContainer {
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 .thumbWrapper {

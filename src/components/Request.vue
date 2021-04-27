@@ -10,13 +10,12 @@
                 :key="'item' + itemIndex"
                 class="topThreeItems"
             >
-                <div>
+                <div class="songArtworkWrapper" @click="addArtistToQueue(item.artist_id)">
                     <img :src="item.artwork_small" class="artwork" />
                 </div>
 
                 <div>
-                    {{ itemIndex + 1 }}.
-                    {{ item.artist }}
+                    <p>{{ itemIndex + 1 }}. {{ item.artist }}</p>
                 </div>
             </div>
         </div>
@@ -28,11 +27,10 @@
                 class="listItem"
             >
                 <div>
-                    {{ itemIndex + 4 }}.
-                    {{ item.artist }}
+                    <p>{{ itemIndex + 4 }}. {{ item.artist }}</p>
                 </div>
 
-                <div class="addIcon" @click="addArtistToQueue(itemIndex + 4)">+</div>
+                <div class="addIcon" @click="addArtistToQueue(item.artist_id)">+</div>
             </div>
 
         </div>
@@ -60,11 +58,24 @@ export default {
     methods: {
         /**
          * Adds requested artist to queue.
-         * @param {Number} itemIndex - index of artist selected
+         * @param {Number} artistId - selected artist id
          */
-        addArtistToQueue(itemIndex) {
-            console.log(this.response[itemIndex])
-            // console.log('check', this.response)
+        addArtistToQueue(artistId) {
+            fetch(`$https://api.rockbot.com/v3/engage/request_artist?artist_id=${artistId}`, {
+                method: "POST",
+                withCredentials: true,
+                headers: {
+                    Authorization: "2ab742c917f872aa88644bc8f995e03159b2",
+                    "Content-Type": "application/json",
+                }
+            })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log("here it is", data)
+            })
+            .catch(err => {
+                console.log('there is an error: ', err)
+            })
         }
     },
     mounted() {
@@ -78,7 +89,7 @@ export default {
         })
         .then((response) => response.json())
         .then((data) => {
-            console.log("top artists data:", data)
+            console.log("top artists", data)
             this.response = data.response;
         })
         .catch(err => {
@@ -107,7 +118,7 @@ export default {
 }
 
 #topArtistsList {
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 .listItem {
@@ -119,6 +130,12 @@ export default {
 
 .listItem:nth-child(1) {
     border-top: 1px solid #EEE;
+}
+
+.songArtworkWrapper {
+    display: flex;
+    justify-content: center;
+    padding: 4px;
 }
 
 .artwork {
