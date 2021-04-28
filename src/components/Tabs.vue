@@ -2,7 +2,6 @@
     <div id="tabs">
         
         <div class="tabMainContent">
-            <!-- <Loader /> -->
             <keep-alive>  
                 <component :is="currentComponent" />
             </keep-alive>
@@ -24,15 +23,12 @@
 </template>
 
 <script>
-import Loader from "./Loader.vue";
-
 import NowPlaying from "./NowPlaying.vue";
 import Request from "./Request.vue";
 
 export default {
     name: 'Tabs',
     components: {
-        Loader,
         NowPlaying,
         Request
     },
@@ -54,9 +50,6 @@ export default {
             this.currentComponent = this.tabs[tabIndex].component;
             console.log(tabIndex)
         }
-    },
-    mounted() {
-
     }
 }
 </script>

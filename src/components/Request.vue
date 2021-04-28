@@ -6,23 +6,24 @@
 
         <div class="top">
             <div
-                v-for="(item, itemIndex) in topThree" 
+                v-for="(item, itemIndex) in response.slice(0, 3)" 
                 :key="'item' + itemIndex"
                 class="topThreeItems"
             >
-                <div class="songArtworkWrapper" @click="addArtistToQueue(item.artist_id)">
+                <div class="artistArtworkWrapper" @click="addArtistToQueue(itemIndex, item.artist_id)">
                     <img :src="item.artwork_small" class="artwork" />
                 </div>
 
-                <div>
+                <div class="artworkLabel">
                     <p>{{ itemIndex + 1 }}. {{ item.artist }}</p>
+                    <span v-if="item.addedToQueue" class="checkmark">&#10003;</span>
                 </div>
             </div>
         </div>
 
         <div id="topArtistsList">
             <div 
-                v-for="(item, itemIndex) in remaining" 
+                v-for="(item, itemIndex) in response.slice(3)" 
                 :key="'item' + itemIndex"
                 class="listItem"
             >
@@ -30,38 +31,40 @@
                     <p>{{ itemIndex + 4 }}. {{ item.artist }}</p>
                 </div>
 
-                <div class="addIcon" @click="addArtistToQueue(item.artist_id)">+</div>
-            </div>
+                <div class="addIcon" @click="addArtistToQueue(itemIndex + 3, item.artist_id)">
+                    <Spinner v-if="item.processing" class="spinner" />
+                    <span v-else-if="!item.addedToQueue">+</span>
+                    <span v-else class="checkmark">&#10003;</span>     
+                </div>
 
+            </div>
         </div>
     </div>
 </template>
 
 <script>
+import Spinner from './Spinner.vue';
+
 export default {
     name: 'Request',
+    components: {
+        Spinner
+    },
     data() {
         return {
             response: []
         }
     },
-    computed: {
-        topThree() {
-            let topThree = this.response.slice(0, 3);
-            return topThree;
-        },
-        remaining() {
-            let remaining = this.response.slice(3);
-            return remaining;
-        }
-    },
     methods: {
         /**
          * Adds requested artist to queue.
-         * @param {Number} artistId - selected artist id
+         * @param {Number} artistIndex - index of selected artist in array
+         * @param {Number} artistId - selected artist_id
          */
-        addArtistToQueue(artistId) {
-            fetch(`$https://api.rockbot.com/v3/engage/request_artist?artist_id=${artistId}`, {
+        addArtistToQueue(artistIndex, artistId) {
+            this.response[artistIndex].processing = true;
+
+            fetch(`https://api.rockbot.com/v3/engage/request_artist?artist_id=${artistId}`, {
                 method: "POST",
                 withCredentials: true,
                 headers: {
@@ -70,8 +73,11 @@ export default {
                 }
             })
             .then((response) => response.json())
-            .then((data) => {
-                console.log("here it is", data)
+            .then(() => {
+                this.response[artistIndex].processing = false;
+                this.response[artistIndex].addedToQueue = true;
+
+                this.$emit('handle-queue-update');
             })
             .catch(err => {
                 console.log('there is an error: ', err)
@@ -89,8 +95,14 @@ export default {
         })
         .then((response) => response.json())
         .then((data) => {
-            console.log("top artists", data)
-            this.response = data.response;
+            let response = data.response;
+
+            response.map(artist => {
+                artist.processing = false;
+                artist.addedToQueue = false;
+            })
+
+            this.response = response;
         })
         .catch(err => {
             console.log('there is an error: ', err)
@@ -132,7 +144,7 @@ export default {
     border-top: 1px solid #EEE;
 }
 
-.songArtworkWrapper {
+.artistArtworkWrapper {
     display: flex;
     justify-content: center;
     padding: 4px;
@@ -141,6 +153,14 @@ export default {
 .artwork {
     border-radius: 50%;
     width: 5.5rem;
+}
+
+.artworkLabel {
+    display: flex;
+}
+
+.artworkLabel > span {
+    padding-left: 2px;
 }
 
 .addIcon {
@@ -157,5 +177,9 @@ export default {
     color: #007EE4;
     border: 1px solid #007EE4;
     cursor: pointer;
+}
+
+.checkmark {
+    color: #007EE4;
 }
 </style>

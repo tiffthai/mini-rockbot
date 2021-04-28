@@ -3,7 +3,7 @@
     <p>mini rockbot</p>
   </div>
 
-  <div id="mainContent">
+  <div id="mainContent">  
     <Tabs />
   </div>
 </template>
@@ -30,7 +30,6 @@ html, body {
 p {
   margin: 0;
   user-select: none;
-  letter-spacing: ;
 }
 
 #app {
