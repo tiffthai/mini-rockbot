@@ -1,15 +1,14 @@
 <template>
   <div id="queued">
-
     <transition name="fade" mode="out-in">
-      <div :key="nowPlaying.song" class="currentlyPlaying">
+      <div :key="properties.nowPlaying.song" class="currentlyPlaying">
         <div>
-          <img :src="nowPlaying.artwork_small" class="currentSongImg" />
+          <img :src="properties.nowPlaying.artwork_small" class="currentSongImg" />
         </div>
 
         <div class="songInfo">
-          <p class="artist">{{ nowPlaying.artist }}</p>
-          <p>{{ nowPlaying.song }}</p>
+          <p class="artist">{{ properties.nowPlaying.artist }}</p>
+          <p>{{ properties.nowPlaying.song }}</p>
         </div>
       </div>
     </transition>
@@ -18,7 +17,7 @@
 
     <div id="comingUpContainer">
       <div
-        v-for="(item, itemIndex) in queue"
+        v-for="(item, itemIndex) in properties.queue"
         :key="'item' + itemIndex"
         class="upNext"
       >
@@ -27,27 +26,30 @@
           <p>{{ item.song }}</p>
         </div>
 
-        <div v-if="item.processing" class="popularityVoteContainer">
-          <Spinner />
-        </div>
-
-        <div class="popularityVoteContainer" v-else-if="!item.userVoted">
-          <div
-            class="thumbWrapper"
-            @click="handleSongVoting(itemIndex, item.pick_id, true)"
-          >
-            <img src="@/assets/thumb.svg" />
+        <div class="songPopularityWrapper">
+          <div v-if="item.processing" class="popularityVoteContainer">
+            <Spinner />
           </div>
 
-          <div
-            class="thumbWrapper dislikeThumbs"
-            @click="handleSongVoting(itemIndex, item.pick_id, false)"
-          >
-            <img src="@/assets/thumb.svg" />
+          <div class="popularityVoteContainer" v-else-if="!item.userVoted">
+            <div
+              class="thumbWrapper"
+              @click="handleSongVoting(itemIndex, item.pick_id, true)"
+            >
+              <img src="@/assets/thumb.svg" />
+            </div>
+
+            <div
+              class="thumbWrapper dislikeThumbs"
+              @click="handleSongVoting(itemIndex, item.pick_id, false)"
+            >
+              <img src="@/assets/thumb.svg" />
+            </div>
           </div>
+
+          <div class="songVotes">{{ item.likes - item.dislikes }}</div>
         </div>
 
-        <div v-else class="songVotes">{{ item.likes - item.dislikes }}</div>
       </div>
     </div>
   </div>
@@ -61,81 +63,29 @@ export default {
   components: {
     Spinner,
   },
+  props: {
+    properties: Object
+  },
   data() {
     return {
       nowPlaying: {},
       queue: []
     };
   },
+  computed: {
+
+  },
   methods: {
     /**
-     * Makes api call to grab queue data
-     */
-    getQueueData() {
-      fetch("https://api.rockbot.com/v3/engage/now_playing?queue=1", {
-        method: "GET",
-        withCredentials: true,
-        headers: {
-          Authorization: "2ab742c917f872aa88644bc8f995e03159b2",
-          "Content-Type": "application/json",
-        },
-      })
-        .then((response) => response.json())
-        .then((data) => {
-            this.nowPlaying = data.response.now_playing
-            let songQueue = data.response.queue;
-
-            songQueue.map((song) => {
-                song.processing = false;
-                song.userVoted = false;
-            });
-
-            this.queue = songQueue;
-        })
-        .catch((err) => {
-          console.log("there is an error: ", err);
-        });
-    },
-    /**
-     * Makes api call to update song popularity based on user's vote
+     * Emits object containing vote data
+     * @param {Number} itemIndex - index of song in queue
      * @param {Number} pickId - pick_id of song
      * @param {Boolean} isVoteUp - user's vote option for song; true: like, false: dislike
      */
     handleSongVoting(itemIndex, pickId, isVoteUp) {
-      // should a new key be added instead? How to keep track of what songs have been voted on?
-      this.queue[itemIndex].processing = true;
-
-      let url = isVoteUp
-        ? "https://api.rockbot.com/v3/engage/vote_up"
-        : "https://api.rockbot.com/v3/engage/vote_down";
-
-      fetch(`${url}?pick_id=${pickId}`, {
-        method: "POST",
-        withCredentials: true,
-        headers: {
-          Authorization: "2ab742c917f872aa88644bc8f995e03159b2",
-          "Content-Type": "application/json",
-        },
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log("here it is", data);
-          this.queue[itemIndex].processing = false;
-          this.queue[itemIndex].userVoted = true;
-          this.queue = data.response.queue;
-        })
-        .catch((err) => {
-          console.log("there is an error: ", err);
-        });
+      this.$emit('handle-song-voting', {itemIndex, pickId, isVoteUp});
     },
-  },
-  mounted() {
-    this.getQueueData();
-
-    setInterval(() => {
-      this.getQueueData();
-    }, 30000);
-  },
+  }
 };
 </script>
 
@@ -175,6 +125,10 @@ export default {
   margin-bottom: 4px;
 }
 
+.songPopularityWrapper {
+  display: flex;
+}
+
 .popularityVoteContainer {
   width: 60px;
   display: flex;
@@ -202,10 +156,11 @@ export default {
 }
 
 .songVotes {
+  width: 12px;
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  padding-right: 10px;
+  padding: 0px 8px;
 }
 
 /** FADE ANIMATION */
