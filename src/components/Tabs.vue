@@ -135,9 +135,9 @@ export default {
     this.getQueueData();
 
     // Update data every 30 seconds
-    setInterval(()=> {
-      this.getQueueData();
-    }, 30000)
+    // setInterval(()=> {
+    //   this.getQueueData();
+    // }, 30000)
   },
 };
 </script>
