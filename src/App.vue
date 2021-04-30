@@ -34,7 +34,7 @@ h2 {
   font-weight: 300;
 }
 
-p {
+h2, p {
   margin: 0;
   user-select: none;
 }
