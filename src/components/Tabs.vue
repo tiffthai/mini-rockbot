@@ -26,11 +26,11 @@
 </template>
 
 <script>
-import NowPlaying from "./NowPlaying.vue";
-import Request from "./Request.vue";
+import NowPlaying from './NowPlaying.vue';
+import Request from './Request.vue';
 
 export default {
-  name: "Tabs",
+  name: 'Tabs',
   components: {
     NowPlaying,
     Request,
@@ -38,10 +38,10 @@ export default {
   data() {
     return {
       tabs: [
-        { name: "Now Playing", component: "NowPlaying" },
-        { name: "Request", component: "Request" },
+        { name: 'Now Playing', component: 'NowPlaying' },
+        { name: 'Request', component: 'Request' }
       ],
-      currentComponent: "NowPlaying",
+      currentComponent: 'NowPlaying',
 
       nowPlaying: {},
       queue: [],
@@ -51,7 +51,7 @@ export default {
     compProps() {
       let properties;
 
-      if (this.currentComponent === "NowPlaying") {
+      if (this.currentComponent === 'NowPlaying') {
         properties = {
           nowPlaying: this.nowPlaying,
           queue: this.queue,
@@ -133,7 +133,7 @@ export default {
   },
   mounted() {
     this.getQueueData();
-    
+
     // Update data every 30 seconds
     setInterval(()=> {
       this.getQueueData();

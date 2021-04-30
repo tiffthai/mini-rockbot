@@ -1,22 +1,21 @@
 <template>
-    <div id="request">
-        <div>
-            <p class="sectionLabel">Top Artists</p>
-        </div>
+    <div id="requestTab">
+        <h2>Top Artists</h2>
 
-        <div class="top">
+        <div class="topThree">
             <div
                 v-for="(item, itemIndex) in response.slice(0, 3)" 
                 :key="'item' + itemIndex"
-                class="topThreeItems"
+                class="topThreeArtists"
             >
                 <div class="artistArtworkWrapper" @click="addArtistToQueue(itemIndex, item.artist_id)">
                     <img :src="item.artwork_small" class="artwork" />
                 </div>
 
-                <div class="artworkLabel">
+                <div class="artistName">
                     <p>{{ itemIndex + 1 }}. {{ item.artist }}</p>
-                    <span v-if="item.addedToQueue" class="checkmark">&#10003;</span>
+                    <Spinner v-if="item.processing" class="spinner" />
+                    <span v-else-if="item.addedToQueue" class="checkmark">&#10003;</span>
                 </div>
             </div>
         </div>
@@ -25,7 +24,7 @@
             <div 
                 v-for="(item, itemIndex) in response.slice(3)" 
                 :key="'item' + itemIndex"
-                class="listItem"
+                class="artistItem"
             >
                 <div>
                     <p>{{ itemIndex + 4 }}. {{ item.artist }}</p>
@@ -112,36 +111,21 @@ export default {
 </script>
 
 <style scoped>
-#request {
+#requestTab {
     width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
 }
 
-.top {
+.topThree {
     display: flex;
     justify-content: center;
     padding: 8px;
 }
 
-.topThreeItems {
+.topThreeArtists {
     padding: 0px 12px;
-}
-
-#topArtistsList {
-    overflow-y: auto;
-}
-
-.listItem {
-    display: flex;
-    justify-content: space-between;
-    border-bottom: 1px solid #EEE;
-    padding: 8px 16px;
-}
-
-.listItem:nth-child(1) {
-    border-top: 1px solid #EEE;
 }
 
 .artistArtworkWrapper {
@@ -155,12 +139,27 @@ export default {
     width: 5.5rem;
 }
 
-.artworkLabel {
+.artistName {
     display: flex;
 }
 
-.artworkLabel > span {
+.artistName > span {
     padding-left: 2px;
+}
+
+#topArtistsList {
+    overflow-y: auto;
+}
+
+.artistItem {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #EEE;
+    padding: 8px 16px;
+}
+
+.artistItem:nth-child(1) {
+    border-top: 1px solid #EEE;
 }
 
 .addIcon {

@@ -1,5 +1,5 @@
 <template>
-  <div id="queued">
+  <div id="nowPlayingTab">
     <transition name="fade" mode="out-in">
       <div :key="properties.nowPlaying.song" class="currentlyPlaying">
         <div>
@@ -13,7 +13,7 @@
       </div>
     </transition>
 
-    <p class="sectionLabel">Coming Up</p>
+    <h2>Coming Up</h2>
 
     <div id="comingUpContainer">
       <div
@@ -56,10 +56,10 @@
 </template>
 
 <script>
-import Spinner from "./Spinner.vue";
+import Spinner from './Spinner.vue';
 
 export default {
-  name: "Queued",
+  name: 'NowPlaying',
   components: {
     Spinner,
   },
@@ -90,7 +90,7 @@ export default {
 </script>
 
 <style scoped>
-#queued {
+#nowPlayingTab {
   width: 100%;
   height: 100%;
   display: flex;

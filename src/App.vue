@@ -27,6 +27,13 @@ html, body {
   font-family: 'Lato', sans-serif;
 }
 
+h2 {
+  font-size: 16px;
+  text-decoration: underline;
+  padding: 8px 12px;
+  font-weight: 300;
+}
+
 p {
   margin: 0;
   user-select: none;
@@ -52,10 +59,5 @@ p {
 #mainContent {
   height: calc(100% - 50px);
   margin-top: 50px;
-}
-
-.sectionLabel {
-  text-decoration: underline;
-  padding: 8px 12px;
 }
 </style>
