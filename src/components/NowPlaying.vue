@@ -72,9 +72,6 @@ export default {
       queue: []
     };
   },
-  computed: {
-
-  },
   methods: {
     /**
      * Emits object containing vote data
